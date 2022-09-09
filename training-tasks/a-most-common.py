@@ -7,14 +7,11 @@ def find_most_common():
             vals_to_times[num] += 1
         else:
             vals_to_times[num] = 1
-    pairs = sorted(vals_to_times.items(), key=lambda x: x[1], reverse=True)
+    max_entries = max(vals_to_times.items(), key=lambda x: x[1])[1]
     winners = []
-    max_entries = pairs[0][1]
-    for pair in pairs:
-        if pair[1] == max_entries:
-            winners.append(pair[0])
-        else:
-            break
+    for el in vals_to_times.items():
+        if el[1] == max_entries:
+            winners.append(el[0])
     return min(winners)
 
 
