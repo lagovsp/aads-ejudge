@@ -7,7 +7,8 @@ def qpow(a, x: int):
         return a
     if x == 2:
         return a * a
-    return a * qpow(a, x - 1) if x % 2 != 0 else qpow(a, int(x / 2)) ** 2
+    hp = qpow(a, int(x / 2))
+    return a * hp * hp if x % 2 != 0 else hp * hp
 
 
 if __name__ == '__main__':
