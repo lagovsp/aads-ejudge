@@ -3,7 +3,7 @@
 from copy import deepcopy
 
 
-def main(num):  # O(n) complexity provided, O(nlogn) is possible
+def main(num):  # O(n) complexity provided, O(logn) is possible
     prelast = 0
     last = 1
     if num == 0 or num == 1:
