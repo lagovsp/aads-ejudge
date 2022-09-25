@@ -1,3 +1,5 @@
+# Copyright Sergey Lagov 2022 lagovsp@gmail.com
+
 def qpow(a, x: int):
     if x < 0:
         return 1 / qpow(a, -x)

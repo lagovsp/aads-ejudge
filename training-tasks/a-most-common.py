@@ -1,3 +1,5 @@
+# Copyright Sergey Lagov 2022 lagovsp@gmail.com
+
 def find_most_common():
     line = input()
     nums = line.split(' ')

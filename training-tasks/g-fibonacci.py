@@ -1,7 +1,9 @@
+# Copyright Sergey Lagov 2022 lagovsp@gmail.com
+
 from copy import deepcopy
 
 
-def main(num):
+def main(num):  # O(n) complexity provided, O(nlogn) is possible
     prelast = 0
     last = 1
     if num == 0 or num == 1:

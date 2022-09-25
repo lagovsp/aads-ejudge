@@ -1,3 +1,5 @@
+# Copyright Sergey Lagov 2022 lagovsp@gmail.com
+
 from string import digits
 import sys
 
