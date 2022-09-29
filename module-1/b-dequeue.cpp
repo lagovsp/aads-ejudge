@@ -8,10 +8,15 @@
 template<typename T>
 class ArrayDequeue {
 public:
-    ArrayDequeue() : _max_size(0), _cur_size(0), size_set(false) {}
+    ArrayDequeue() :
+            _max_size(0),
+            _cur_size(0),
+            size_set(false) {}
 
     ~ArrayDequeue() {
-        if (_max_size < 1) { return; }
+        if (_max_size < 1) {
+            return;
+        }
         delete[] _data;
     }
 
@@ -23,7 +28,9 @@ public:
         size_set = true;
         _max_size = s;
         _cur_size = 0;
-        if (_max_size < 1) { return; }
+        if (_max_size < 1) {
+            return;
+        }
         _data = new T[_max_size];
     }
 
@@ -106,15 +113,17 @@ public:
     }
 
     [[nodiscard]] bool empty() const {
-        if (_cur_size == 0) { return true; }
+        if (_cur_size == 0) {
+            return true;
+        }
         return false;
     }
 
-    [[nodiscard]] bool alreadyset() const {
+    [[nodiscard]] bool already_set() const {
         return size_set;
     }
 
-    void print() {
+    void print() const {
         if (!size_set) {
             std::cout << "error" << std::endl;
             return;
@@ -148,13 +157,6 @@ private:
     bool size_set = false;
     size_t _max_size, _cur_size, _begin, _end;
 };
-
-std::ostream &operator<<(std::ostream &os, const std::vector<std::string> &v) {
-    for (const auto &el: v) {
-        os << el << std::endl;
-    }
-    return os;
-}
 
 int main() {
     std::string s;
@@ -193,7 +195,7 @@ int main() {
                 deq.push_back(arg);
                 continue;
             }
-            if (s.size() > 9 && !deq.alreadyset() && s.substr(0, 9) == "set_size ") {
+            if (s.size() > 9 && !deq.already_set() && s.substr(0, 9) == "set_size ") {
                 int n = stoi(s.substr(9, std::string::npos));
                 if (n > -1) {
                     deq.set_size(n);
