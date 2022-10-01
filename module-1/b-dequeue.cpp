@@ -1,7 +1,6 @@
 // Copyright Sergey Lagov 2022 lagovsp@gmail.com
 
 #include <iostream>
-#include <vector>
 #include <string>
 
 
@@ -15,9 +14,8 @@ public:
 
     ~ArrayDequeue() {
         if (_max_size < 1) {
-            return;
+            delete[] _data;
         }
-        delete[] _data;
     }
 
     void set_size(size_t s) {
