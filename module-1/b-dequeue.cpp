@@ -13,7 +13,7 @@ public:
             size_set(false) {}
 
     ~ArrayDequeue() {
-        if (_max_size < 1) {
+        if (_max_size > 0) {
             delete[] _data;
         }
     }
