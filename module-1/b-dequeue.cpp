@@ -26,10 +26,9 @@ public:
         size_set = true;
         _max_size = s;
         _cur_size = 0;
-        if (_max_size < 1) {
-            return;
+        if (_max_size > 0) {
+            _data = new T[_max_size];
         }
-        _data = new T[_max_size];
     }
 
     void push_front(T el) {
