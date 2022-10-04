@@ -14,7 +14,16 @@ class BinVertex:
         return f'{self.val}'
 
 
-def desc_evens(root: BinVertex):
+def tree_height(root: BinVertex, cur_height=None) -> int:
+    if cur_height is None:
+        cur_height = 0
+    if root is None:
+        return cur_height
+    return max(tree_height(root.left, cur_height=cur_height + 1),
+               tree_height(root.right, cur_height=cur_height + 1))
+
+
+def desc_evens(root: BinVertex) -> list:
     s = deque()  # actually stack
     cur = root
     evens = []
@@ -22,17 +31,17 @@ def desc_evens(root: BinVertex):
         print(f'now {cur}')
         if cur is not None:
             s.append(cur)
-            print(f'put {cur}, s = {list(s)}')
+            print(f'put {cur}, stack = {list(s)}')
             cur = cur.right
             continue
         el = s.pop()
         if el.val % 2 == 0:
             evens.append(el.val)
-        print(f'evens = {evens}')
+        print(f'evens so far = {evens}')
         cur = el.left
         if cur is None and not s:
             break
-    print(evens)
+    return evens
 
 
 def n_parents_l(p: BinVertex, c1, c2):
@@ -59,6 +68,8 @@ if __name__ == '__main__':
     n12 = BinVertex(v=110)
     n13 = BinVertex(v=107)
 
+    n_extra = BinVertex(v=32)
+
     n_parents_l(n9, n7, n10)
     n_parents_l(n7, n6, n8)
     n_parents_l(n6, None, n5)
@@ -70,4 +81,7 @@ if __name__ == '__main__':
     n_parents_l(n11, None, n12)
     n_parents_l(n12, n13, None)
 
-    desc_evens(n9)
+    n_parents_l(n1, n_extra, None)
+
+    print(desc_evens(n9))
+    print(tree_height(n9))
