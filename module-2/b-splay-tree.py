@@ -20,26 +20,34 @@ class Vertex:
         return self.__str__()
 
     def search(self, k: int) -> (bool, 'Vertex'):
-        if k == self.key:
-            return True, self
-        if k < self.key and self.left is not None:
-            return self.left.search(k)
-        elif self.right is not None:
-            return self.right.search(k)
-        return False, None
+        cur = self
+        while True:
+            if k == cur.key:
+                return True, cur
+            if k < cur.key:
+                if cur.left is None:
+                    return False, cur
+                cur = cur.left
+                continue
+            if cur.right is None:
+                return False, cur
+            cur = cur.right
 
     def add(self, k: int, v: str) -> (bool, 'Vertex'):
-        if k == self.key:
-            return False, self
-        if k < self.key:
-            if self.left is None:
-                self.left = Vertex(k=k, v=v, p=self)
-                return True, self.left
-            return self.left.add(k, v)
-        if self.right is None:
-            self.right = Vertex(k=k, v=v, p=self)
-            return True, self.right
-        return self.right.add(k, v)
+        cur = self
+        while True:
+            if k == cur.key:
+                return False, cur
+            if k < cur.key:
+                if cur.left is None:
+                    cur.left = Vertex(k=k, v=v, p=cur)
+                    return True, cur.left
+                cur = cur.left
+                continue
+            if cur.right is None:
+                cur.right = Vertex(k=k, v=v, p=cur)
+                return True, cur.right
+            cur = cur.right
 
     def is_left_child(self) -> bool:
         if self.parent is None:
@@ -68,7 +76,6 @@ class SplayTree:
         cur = self.root
         while (cur.right if max else cur.left) is not None:
             cur = cur.right if max else cur.left
-        self.splay(cur)
         return True, cur
 
     def __min(self):
@@ -106,43 +113,55 @@ class SplayTree:
             return rhs.root
         if rhs.root is None:
             return lhs.root
-        x = lhs.__max()[1]
-        x.right = rhs.root
+        node = lhs.__max()[1]
+        lhs.splay(node)
+        node.right = rhs.root
         if rhs.root is not None:
-            rhs.root.parent = x
-        return x
+            rhs.root.parent = node
+        return node
 
     def add(self, k: int, v: str):
-        s = self.__add(k, v)
-        if not s[0]:
+        status, node = self.__add(k, v)
+        self.splay(node)
+        if not status:
             print('error')
-        self.splay(s[1])
 
     def set(self, k: int, v: str):
-        s = self.__search(k)
-        if not s[0]:
-            print('error')
+        status, node = self.__search(k)
+        self.splay(node)
+        if status:
+            node.val = v
             return
-        s[1].val = v
-        self.splay(s[1])
+        print('error')
 
     def delete(self, k: int):
-        s = self.__search(k)
-        if not s[0]:
+        status, node = self.__search(k)
+        self.splay(node)
+        if not status:
             print('error')
             return
-        self.splay(s[1])
-        s[1].left.parent, s[1].right.parent = None, None
-        self.root = SplayTree.merge(SplayTree(r=s[1].left),
-                                    SplayTree(r=s[1].right))
+        if node.left is None and node.right is None:
+            self.root = None
+            return
+        if node.left is None:
+            node.right.parent = None
+            self.root = node.right
+            return
+        if node.right is None:
+            node.left.parent = None
+            self.root = node.left
+            return
+        node.left.parent, node.right.parent = None, None
+        self.root = SplayTree.merge(SplayTree(r=node.left),
+                                    SplayTree(r=node.right))
 
     def search(self, k: int):
-        s = self.__search(k)
-        if not s[0]:
-            print('0')
+        status, node = self.__search(k)
+        self.splay(node)
+        if status:
+            print(f'1 {node.val}')
             return
-        self.splay(s[1])
-        print(f'1 {s[1].val}')
+        print('0')
 
     def print(self):
         if self.root is None:
@@ -167,18 +186,20 @@ class SplayTree:
             verts = next_verts
 
     def min(self):
-        s = self.__min()
-        if not s[0]:
+        status, node = self.__min()
+        if not status:
             print('error')
             return
-        print(f'{s[1].key} {s[1].val}')
+        self.splay(node)
+        print(f'{node.key} {node.val}')
 
     def max(self):
-        s = self.__max()
-        if not s[0]:
+        status, node = self.__max()
+        if not status:
             print('error')
             return
-        print(f'{s[1].key} {s[1].val}')
+        self.splay(node)
+        print(f'{node.key} {node.val}')
 
     def __is_zig(self, x: Vertex) -> bool:
         if x.parent is self.root:
@@ -216,7 +237,9 @@ class SplayTree:
         self.__rotate(x, False)
         return self.__rotate(x, True)
 
-    def splay(self, x: Vertex) -> Vertex:
+    def splay(self, x: Vertex):
+        if x is None:
+            return
         while x is not self.root:
             if self.__is_zig(x):
                 x = self.__zig(x)
@@ -227,7 +250,6 @@ class SplayTree:
             if self.__is_zig_zag(x):
                 x = self.__zig_zag(x)
                 continue
-        return x
 
 
 def main():
@@ -253,11 +275,11 @@ def main():
             methods[line](st)
             continue
         if re.match(r'^(delete|search) (0|(-?[1-9]\d*))$', line):
-            c, k = line.split()
+            c, k = re.split(' ', line)
             methods[c](st, int(k))
             continue
-        if re.match(r'^(add|set) (0|(-?[1-9]\d*)) \S+$', line):
-            c, k, v = line.split()
+        if re.match(r'^(add|set) (0|(-?[1-9]\d*)) .*$', line):
+            c, k, v = re.split(' ', line)
             methods[c](st, int(k), v)
             continue
         print('error')
