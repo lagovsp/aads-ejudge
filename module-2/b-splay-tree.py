@@ -110,14 +110,18 @@ class SplayTree:
     @staticmethod
     def merge(lhs: 'SplayTree', rhs: 'SplayTree') -> Vertex:
         if lhs.root is None:
+            if rhs.root is None:
+                return None
+            rhs.root.parent = None
             return rhs.root
         if rhs.root is None:
+            lhs.root.parent = None
             return lhs.root
+        lhs.root.parent, rhs.root.parent = None, None
         node = lhs.__max()[1]
         lhs.splay(node)
         node.right = rhs.root
-        if rhs.root is not None:
-            rhs.root.parent = node
+        rhs.root.parent = node
         return node
 
     def add(self, k: int, v: str):
@@ -140,18 +144,6 @@ class SplayTree:
         if not status:
             print('error')
             return
-        if node.left is None and node.right is None:
-            self.root = None
-            return
-        if node.left is None:
-            node.right.parent = None
-            self.root = node.right
-            return
-        if node.right is None:
-            node.left.parent = None
-            self.root = node.left
-            return
-        node.left.parent, node.right.parent = None, None
         self.root = SplayTree.merge(SplayTree(r=node.left),
                                     SplayTree(r=node.right))
 
@@ -178,27 +170,24 @@ class SplayTree:
                     if v.right is not None:
                         stop = False
                         next_verts[2 * i + 1] = v.right
-                else:
-                    next_verts[2 * i] = None
-                    next_verts[2 * i + 1] = None
                 ins[i] = '_' if v is None else v.__str__()
             print(' '.join(ins))
             verts = next_verts
 
     def min(self):
         status, node = self.__min()
+        self.splay(node)
         if not status:
             print('error')
             return
-        self.splay(node)
         print(f'{node.key} {node.val}')
 
     def max(self):
         status, node = self.__max()
+        self.splay(node)
         if not status:
             print('error')
             return
-        self.splay(node)
         print(f'{node.key} {node.val}')
 
     def __is_zig(self, x: Vertex) -> bool:
