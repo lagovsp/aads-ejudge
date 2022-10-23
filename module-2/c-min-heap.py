@@ -13,7 +13,8 @@ class Node:
 
     @staticmethod
     def children(i: int) -> (int, int):
-        return 2 * i + 1, 2 * i + 2
+        left = 2 * i + 1
+        return left, left + 1
 
     def __init__(self, k=None, v=None):
         self.key = k
@@ -91,7 +92,10 @@ class MinHeap:
             print('error')
             return
         print(f'{self.data[0].key} {self.data[0].val}')
-        self.delete(self.data[0].key)
+        self.__swap_nodes(0, len(self.data) - 1)
+        self.index.pop(self.data[len(self.data) - 1].key)
+        self.data.pop()
+        self.__sift_down(0)
 
     def print(self):
         if not self.data:
