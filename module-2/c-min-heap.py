@@ -98,18 +98,19 @@ class MinHeap:
         self.__sift_down(0)
 
     def print(self):
-        if not self.data:
-            print('_')
-            return
         layer, i, stop = 1, 0, False
         while not stop:
-            ins, li = ['_'] * layer, 0
+            ins, li = [None] * layer, 0
             if i + layer < len(self.data):
                 upper_bound = i + layer
             else:
                 stop = True
                 upper_bound = len(self.data)
-            for it in range(i, upper_bound):
+                it = len(self.data) - i - 1
+                while it < layer:
+                    ins[it] = '_'
+                    it += 1
+            while i < upper_bound:
                 ins[li] = self.data[i].str(self, i)
                 li += 1
                 i += 1
@@ -148,16 +149,7 @@ class MinHeap:
         if found_par and self.data[i].key < self.data[pi].key:
             self.__sift_up(i)
             return
-        left, right = Node.children(i)
-        ln, rn = self.get_node(left), self.get_node(right)
-        neighbours = [self.data[i].key]
-        if rn[0]:
-            neighbours.append(rn[1].key)
-            neighbours.append(ln[1].key)
-        elif ln[0]:
-            neighbours.append(ln[1].key)
-        if min(neighbours) != self.data[i].key:
-            self.__sift_down(i)
+        self.__sift_down(i)
 
 
 def main():
