@@ -16,9 +16,6 @@ class Vertex:
             return f'[{self.key} {self.val} {self.parent.key}]'
         return f'[{self.key} {self.val}]'
 
-    def __repr__(self) -> str:
-        return self.__str__()
-
     def search(self, k: int) -> (bool, 'Vertex'):
         cur = self
         while True:
@@ -156,21 +153,20 @@ class SplayTree:
         print('0')
 
     def print(self):
-        if self.root is None:
-            print('_')
-            return
         verts, stop = [self.root], False
         while not stop:
             stop, next_verts, ins = True, [None] * (len(verts) * 2), [None] * len(verts)
             for i, v in enumerate(verts):
-                if v is not None:
-                    if v.left is not None:
-                        stop = False
-                        next_verts[2 * i] = v.left
-                    if v.right is not None:
-                        stop = False
-                        next_verts[2 * i + 1] = v.right
-                ins[i] = '_' if v is None else v.__str__()
+                if v is None:
+                    ins[i] = '_'
+                    continue
+                ins[i] = v.__str__()
+                if v.left is not None:
+                    stop = False
+                    next_verts[2 * i] = v.left
+                if v.right is not None:
+                    stop = False
+                    next_verts[2 * i + 1] = v.right
             print(' '.join(ins))
             verts = next_verts
 
@@ -227,17 +223,15 @@ class SplayTree:
         return self.__rotate(x, True)
 
     def splay(self, x: Vertex):
-        if x is None:
-            return
-        while x is not self.root:
+        while x is not None and x is not self.root:
             if self.__is_zig(x):
-                x = self.__zig(x)
+                self.__zig(x)
                 continue
             if self.__is_zig_zig(x):
-                x = self.__zig_zig(x)
+                self.__zig_zig(x)
                 continue
             if self.__is_zig_zag(x):
-                x = self.__zig_zag(x)
+                self.__zig_zag(x)
                 continue
 
 
