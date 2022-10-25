@@ -3,7 +3,7 @@
 import re
 
 
-class Vertex:
+class Node:
     def __init__(self, k=None, v=None, l=None, r=None, p=None):
         self.key = k
         self.val = v
@@ -11,7 +11,7 @@ class Vertex:
         self.right = r
         self.parent = p
 
-    def search(self, k: int) -> (bool, 'Vertex'):
+    def search(self, k: int) -> (bool, 'Node'):
         cur = self
         while True:
             if k == cur.key:
@@ -25,19 +25,19 @@ class Vertex:
                 return False, cur
             cur = cur.right
 
-    def add(self, k: int, v: str) -> (bool, 'Vertex'):
+    def add(self, k: int, v: str) -> (bool, 'Node'):
         cur = self
         while True:
             if k == cur.key:
                 return False, cur
             if k < cur.key:
                 if cur.left is None:
-                    cur.left = Vertex(k=k, v=v, p=cur)
+                    cur.left = Node(k=k, v=v, p=cur)
                     return True, cur.left
                 cur = cur.left
                 continue
             if cur.right is None:
-                cur.right = Vertex(k=k, v=v, p=cur)
+                cur.right = Node(k=k, v=v, p=cur)
                 return True, cur.right
             cur = cur.right
 
@@ -51,18 +51,18 @@ class SplayTree:
     def __init__(self, r=None):
         self.root = r
 
-    def __search(self, k: int) -> (bool, Vertex):
+    def __search(self, k: int) -> (bool, Node):
         if self.root is None:
             return False, None
         return self.root.search(k)
 
-    def __add(self, k: int, v: str) -> (bool, Vertex):
+    def __add(self, k: int, v: str) -> (bool, Node):
         if self.root is None:
-            self.root = Vertex(k=k, v=v)
+            self.root = Node(k=k, v=v)
             return True, self.root
         return self.root.add(k, v)
 
-    def __extreme(self, max=True) -> (bool, Vertex):
+    def __extreme(self, max=True) -> (bool, Node):
         if self.root is None:
             return False, None
         cur = self.root
@@ -70,13 +70,13 @@ class SplayTree:
             cur = cur.right if max else cur.left
         return True, cur
 
-    def __min(self) -> (bool, Vertex):
+    def __min(self) -> (bool, Node):
         return self.__extreme(max=False)
 
-    def __max(self) -> (bool, Vertex):
+    def __max(self) -> (bool, Node):
         return self.__extreme()
 
-    def __rotate(self, x: Vertex, right: bool) -> Vertex:
+    def __rotate(self, x: Node, right: bool) -> Node:
         m = x.right if right else x.left
         p = x.parent
         if p.parent is None:
@@ -99,7 +99,7 @@ class SplayTree:
         return x
 
     @staticmethod
-    def merge(lhs: 'SplayTree', rhs: 'SplayTree') -> Vertex:
+    def merge(lhs: 'SplayTree', rhs: 'SplayTree') -> Node:
         if lhs.root is None:
             if rhs.root is None:
                 return None
@@ -136,64 +136,64 @@ class SplayTree:
         self.root = SplayTree.merge(SplayTree(r=node.left),
                                     SplayTree(r=node.right))
 
-    def search(self, k: int) -> (bool, Vertex):
+    def search(self, k: int) -> (bool, Node):
         status, node = self.__search(k)
         self.__splay(node)
         if not status:
             return False, None
         return True, node
 
-    def min(self) -> Vertex:
+    def min(self) -> Node:
         status, node = self.__min()
         self.__splay(node)
         if not status:
             raise Exception('empty, no minimum element')
         return node
 
-    def max(self) -> Vertex:
+    def max(self) -> Node:
         status, node = self.__max()
         self.__splay(node)
         if not status:
             raise Exception('empty, no maximum element')
         return node
 
-    def __is_zig(self, x: Vertex) -> bool:
+    def __is_zig(self, x: Node) -> bool:
         if x.parent is self.root:
             return True
         return False
 
-    def __is_zig_zig(self, x: Vertex) -> bool:
+    def __is_zig_zig(self, x: Node) -> bool:
         if x.is_left_child() and x.parent is not None and x.parent.is_left_child():
             return True
         if not x.is_left_child() and x.parent is not None and not x.parent.is_left_child():
             return True
         return False
 
-    def __is_zig_zag(self, x: Vertex) -> bool:
+    def __is_zig_zag(self, x: Node) -> bool:
         if x.is_left_child() and x.parent is not None and not x.parent.is_left_child():
             return True
         if not x.is_left_child() and x.parent is not None and x.parent.is_left_child():
             return True
         return False
 
-    def __zig(self, x) -> Vertex:
+    def __zig(self, x) -> Node:
         return self.__rotate(x, True if x.is_left_child() else False)
 
-    def __zig_zig(self, x: Vertex) -> Vertex:
+    def __zig_zig(self, x: Node) -> Node:
         if x.is_left_child():
             self.__rotate(x.parent, True)
             return self.__rotate(x, True)
         self.__rotate(x.parent, False)
         return self.__rotate(x, False)
 
-    def __zig_zag(self, x: Vertex) -> Vertex:
+    def __zig_zag(self, x: Node) -> Node:
         if x.is_left_child():
             self.__rotate(x, True)
             return self.__rotate(x, False)
         self.__rotate(x, False)
         return self.__rotate(x, True)
 
-    def __splay(self, x: Vertex):
+    def __splay(self, x: Node):
         while x is not None and x is not self.root:
             if self.__is_zig(x):
                 self.__zig(x)
