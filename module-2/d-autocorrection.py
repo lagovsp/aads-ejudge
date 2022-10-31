@@ -17,7 +17,6 @@ class Trie:
             self.parent = p
             self.children = dict()  # Ключи - первые символы следующих переходов, значения - вершины
             self.is_terminal = t  # Заканчивается ли здесь слово
-            # self.is_leaf = l
 
         def split(self, split_len: int, words: list) -> 'Node':
             if not 0 < split_len < self.parent.pref_len - self.pref_len:
@@ -62,7 +61,7 @@ class Trie:
                 s = 0 if w1[j - 1] == w2[cur_line - 1] else 1
                 transposition = math.inf
                 if cur_line > 1 and j > 1:
-                    t = 1 if w1[j - 1] == w2[ppi] and w1[j - 2] == w2[pi] else math.inf
+                    t = 1 if w1[j - 1] == w2[cur_line - 2] and w1[j - 2] == w2[cur_line - 1] else math.inf
                     transposition = lines[ppi][j - 2] + t
                 lines[i][j] = min(
                     lines[i][j - 1] + 1,
@@ -90,46 +89,49 @@ class Trie:
                 cur_node.children.update({word[cur_index]: Trie.Node(
                     len(self.words) - 1, len(word), p=cur_node, t=True)})
                 return
-            i=0
-            index=child.list_index
-            for i in range(child.parent.pref_len+1,child.parent.pref_len+child.pref_len):
-                if
+            i = 0
+            index = child.list_index
+            # for i in range(child.parent.pref_len + 1, child.parent.pref_len + child.pref_len):
+            #     if
             # while self.words[index]
-            if self.words[child.list_index][:child.pref_len]
-                if len(child)
-                    cur_index += 1
+            # if self.words[child.list_index][:child.pref_len]
+            #     if len(child)
+            #         cur_index += 1
 
     def check_word(self, word: str) -> (ResultType, list):
         return Trie.ResultType.MATCHED, []
 
 
 def main():
-    w1 = 'список'
-    w2 = 'кипяток'
+    # w1 = 'список'
+    # w2 = 'кипяток'
+
+    w1 = 'вестибулярный'
+    w2 = 'весна'
 
     print(Trie.damerau_levenshtein_dist(w1, w2))
 
-    # t, length = Trie(), int(input())
-    #
-    # for i in range(length):
-    #     t.add_word(input())
-    #
-    # while True:
-    #     try:
-    #         line = input()
-    #     except EOFError:
-    #         break
-    #     if not line:
-    #         continue
-    #     status, suggests = t.check_word(line)
-    #
-    #     if status == Trie.ResultType.MATCHED:
-    #         print(f'{line} - ok')
-    #         continue
-    #     if status == Trie.ResultType.SUGGESTED:
-    #         print(f'{line} -> {", ".join(suggests)}')
-    #         continue
-    #     print(f'{line} -?')
+    t, length = Trie(), int(input())
+
+    for i in range(length):
+        t.add_word(input())
+
+    while True:
+        try:
+            line = input()
+        except EOFError:
+            break
+        if not line:
+            continue
+        status, suggests = t.check_word(line)
+
+        if status == Trie.ResultType.MATCHED:
+            print(f'{line} - ok')
+            continue
+        if status == Trie.ResultType.SUGGESTED:
+            print(f'{line} -> {", ".join(suggests)}')
+            continue
+        print(f'{line} -?')
 
 
 if __name__ == '__main__':
