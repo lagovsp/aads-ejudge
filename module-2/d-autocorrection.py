@@ -11,11 +11,22 @@ class Trie:
         UNKNOWN = 2
 
     class Node:
-        def __init__(self, s=None, p=None, l=False):
-            self.string = s
+        def __init__(self, li=None, pl=None, p=None, t=None):
+            self.list_index = li  # Какой индекс у слова в списке слов дерева, префиксом которого это слово является
+            self.pref_len = pl  # Префиксом какой длины слово этой вершины является для листа
             self.parent = p
-            self.children = dict()
-            self.is_leaf = l
+            self.children = dict()  # Ключи - первые символы следующих переходов, значения - вершины
+            self.is_terminal = t  # Заканчивается ли здесь слово
+            # self.is_leaf = l
+
+        def split(self, split_len: int, words: list) -> 'Node':
+            if not 0 < split_len < self.parent.pref_len - self.pref_len:
+                raise Exception('split length error')
+            nn = Trie.Node(li=self.list_index, pl=split_len, p=self.parent, t=False)
+            self.parent.children[words[self.list_index][self.parent.pref_len + 1]] = nn
+            self.parent = nn
+            nn.children[words[self.list_index][nn.pref_len + 1]] = self
+            return nn
 
     @staticmethod
     def damerau_levenshtein_dist(w1: str, w2: str) -> int:
@@ -33,7 +44,7 @@ class Trie:
         чтобы длина строки была минимальна.
         Для подсчёта клетки необходимы лишь 3 последние строки - храним только их
         '''
-        
+
         if not w1 or not w2:
             return max(len(w1), len(w2))
         if len(w2) < len(w1):
@@ -64,15 +75,29 @@ class Trie:
 
     def __init__(self):
         self.root = Trie.Node()
+        # Здесь хранятся терминальные строки.
+        # Вершины содержат ссылки на слова из списка и длины префикса, которым эти вершины соответствуют
+        # Строки в Python очень тяжелые. Если бы мы хранили строки в вершинах, было бы n строк.
+        # При таком подходе количество строк равно количеству листьев, два int должны весить меньше
+        self.words = list()
 
     def add_word(self, word: str):
         cur_index, cur_node = 0, self.root
         while True:
             child = cur_node.children.get(word[cur_index])
             if child is None:
-                cur_node.children.update(
-                    {word[cur_index]: Trie.Node(word[cur_index:], p=cur_node, l=True)})
+                self.words.append(word)
+                cur_node.children.update({word[cur_index]: Trie.Node(
+                    len(self.words) - 1, len(word), p=cur_node, t=True)})
                 return
+            i=0
+            index=child.list_index
+            for i in range(child.parent.pref_len+1,child.parent.pref_len+child.pref_len):
+                if
+            # while self.words[index]
+            if self.words[child.list_index][:child.pref_len]
+                if len(child)
+                    cur_index += 1
 
     def check_word(self, word: str) -> (ResultType, list):
         return Trie.ResultType.MATCHED, []
@@ -84,27 +109,27 @@ def main():
 
     print(Trie.damerau_levenshtein_dist(w1, w2))
 
-    t, length = Trie(), int(input())
-
-    for i in range(length):
-        t.add_word(input())
-
-    while True:
-        try:
-            line = input()
-        except EOFError:
-            break
-        if not line:
-            continue
-        status, suggests = t.check_word(line)
-
-        if status == Trie.ResultType.MATCHED:
-            print(f'{line} - ok')
-            continue
-        if status == Trie.ResultType.SUGGESTED:
-            print(f'{line} -> {", ".join(suggests)}')
-            continue
-        print(f'{line} -?')
+    # t, length = Trie(), int(input())
+    #
+    # for i in range(length):
+    #     t.add_word(input())
+    #
+    # while True:
+    #     try:
+    #         line = input()
+    #     except EOFError:
+    #         break
+    #     if not line:
+    #         continue
+    #     status, suggests = t.check_word(line)
+    #
+    #     if status == Trie.ResultType.MATCHED:
+    #         print(f'{line} - ok')
+    #         continue
+    #     if status == Trie.ResultType.SUGGESTED:
+    #         print(f'{line} -> {", ".join(suggests)}')
+    #         continue
+    #     print(f'{line} -?')
 
 
 if __name__ == '__main__':
