@@ -28,7 +28,7 @@ class MinHeap:
 
     def get_node_by_index(self, i: int) -> Vertex:
         if not -1 < i < len(self.data):
-            raise Exception('index out of heap data range')
+            return None
         return self.data[i]
 
     def add(self, k: int, v: str):
@@ -54,15 +54,15 @@ class MinHeap:
         self.data.pop()
         self.__heapify(i)
 
-    def search(self, k: int) -> (bool, int):
+    def search(self, k: int) -> int:
         '''
-        Возвращает флаг результата (False - не найдено, True - найдено) и индекс найденного элемента.
-        В случае flag = True гарантируется, что элемент по индексу будет этим элементом
+        Возвращает индекс найденного элемента.
+        -1, если элемент не был найден
         '''
         i = self.index.get(k)
         if i is None:
-            return False, i
-        return True, i
+            return -1
+        return i
 
     def min(self) -> int:
         '''
@@ -193,8 +193,8 @@ def main():
                 continue
             if re.fullmatch(r'search (0|(-?[1-9]\d*))', line):
                 _, k = re.split(' ', line)
-                status, i = mh.search(int(k))
-                print(f'1 {i} {mh.get_node_by_index(i).val}' if status else '0')
+                i = mh.search(int(k))
+                print(f'1 {i} {mh.get_node_by_index(i).val}' if not i == -1 else '0')
                 continue
             if re.fullmatch(r'add (0|(-?[1-9]\d*)) .*', line):
                 _, k, v = re.split(' ', line)
