@@ -27,6 +27,8 @@ class MinHeap:
         self.index = dict()
 
     def get_node_by_index(self, i: int) -> Vertex:
+        if not -1 < i < len(self.data):
+            raise Exception('index out of heap data range')
         return self.data[i]
 
     def add(self, k: int, v: str):
@@ -85,18 +87,17 @@ class MinHeap:
                 max_i = i if self.data[max_i].key < self.data[i].key else max_i
         return max_i
 
-    def extract(self) -> (int, str):
+    def extract(self) -> Vertex:
         '''
-        Возвращает ключ и значение извлекаемого (первого) элемента
+        Возвращает извлекаемый (первый) элемент кучи
         '''
         if not self.data:
             raise Exception('empty, nothing to extract')
-        key, val = self.data[0].key, self.data[0].val
         self.__swap_vertices(0, len(self.data) - 1)
         self.index.pop(self.data[len(self.data) - 1].key)
-        self.data.pop()
+        ret = self.data.pop()
         self.__sift_down(0)
-        return key, val
+        return ret
 
     def __swap_vertices(self, lhs: int, rhs: int):
         self.index.update({self.data[lhs].key: rhs})
@@ -183,8 +184,8 @@ def main():
                 print(f'{n.key} {i} {n.val}')
                 continue
             if line == 'extract':
-                k, v = mh.extract()
-                print(f'{k} {v}')
+                n = mh.extract()
+                print(f'{n.key} {n.val}')
                 continue
             if re.fullmatch(r'delete (0|(-?[1-9]\d*))', line):
                 _, k = re.split(' ', line)
