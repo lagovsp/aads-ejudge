@@ -26,6 +26,9 @@ class MinHeap:
         self.data = []
         self.index = dict()
 
+    def get_node_by_index(self, i: int) -> Vertex:
+        return self.data[i]
+
     def add(self, k: int, v: str):
         if k in self.index:
             raise Exception('adding present element')
@@ -49,18 +52,30 @@ class MinHeap:
         self.data.pop()
         self.__heapify(i)
 
-    def search(self, k: int) -> (bool, int, str):
+    def search(self, k: int) -> (bool, int):
+        '''
+        Возвращает флаг результата (False - не найдено, True - найдено) и индекс найденного элемента.
+        В случае flag = True гарантируется, что элемент по индексу будет этим элементом
+        '''
         i = self.index.get(k)
         if i is None:
-            return False, None, None
-        return True, i, self.data[i].val
+            return False, i
+        return True, i
 
-    def min(self) -> (int, int, str):
+    def min(self) -> int:
+        '''
+        Возвращает индекс минимума.
+        Исключение в случае пустой кучи
+        '''
         if not self.data:
             raise Exception('empty, no minimum element')
-        return self.data[0].key, 0, self.data[0].val
+        return 0
 
-    def max(self) -> (int, int, str):
+    def max(self) -> int:
+        '''
+        Возвращает индекс максимума.
+        Исключение в случае пустой кучи
+        '''
         if not self.data:
             raise Exception('empty, no maximum element')
         max_i = len(self.data) - 1
@@ -68,9 +83,12 @@ class MinHeap:
         if found_par:
             for i in range(max_i, stop, -1):
                 max_i = i if self.data[max_i].key < self.data[i].key else max_i
-        return self.data[max_i].key, max_i, self.data[max_i].val
+        return max_i
 
     def extract(self) -> (int, str):
+        '''
+        Возвращает ключ и значение извлекаемого (первого) элемента
+        '''
         if not self.data:
             raise Exception('empty, nothing to extract')
         key, val = self.data[0].key, self.data[0].val
@@ -155,12 +173,14 @@ def main():
                 print_heap(mh)
                 continue
             if line == 'min':
-                k, i, v = mh.min()
-                print(f'{k} {i} {v}')
+                i = mh.min()
+                n = mh.get_node_by_index(i)
+                print(f'{n.key} {i} {n.val}')
                 continue
             if line == 'max':
-                k, i, v = mh.max()
-                print(f'{k} {i} {v}')
+                i = mh.max()
+                n = mh.get_node_by_index(i)
+                print(f'{n.key} {i} {n.val}')
                 continue
             if line == 'extract':
                 k, v = mh.extract()
@@ -172,8 +192,8 @@ def main():
                 continue
             if re.fullmatch(r'search (0|(-?[1-9]\d*))', line):
                 _, k = re.split(' ', line)
-                status, i, v = mh.search(int(k))
-                print(f'1 {i} {v}' if status else '0')
+                status, i = mh.search(int(k))
+                print(f'1 {i} {mh.get_node_by_index(i).val}' if status else '0')
                 continue
             if re.fullmatch(r'add (0|(-?[1-9]\d*)) .*', line):
                 _, k, v = re.split(' ', line)
