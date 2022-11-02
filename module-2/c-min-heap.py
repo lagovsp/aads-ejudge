@@ -27,9 +27,7 @@ class MinHeap:
         self.index = dict()
 
     def get_node_by_index(self, i: int) -> Vertex:
-        if not -1 < i < len(self.data):
-            return None
-        return self.data[i]
+        return self.data[i] if -1 < i < len(self.data) else None
 
     def add(self, k: int, v: str):
         if k in self.index:
@@ -57,12 +55,9 @@ class MinHeap:
     def search(self, k: int) -> int:
         '''
         Возвращает индекс найденного элемента.
-        -1, если элемент не был найден
+        None, если элемент не был найден
         '''
-        i = self.index.get(k)
-        if i is None:
-            return -1
-        return i
+        return self.index.get(k)
 
     def min(self) -> int:
         '''
@@ -194,7 +189,7 @@ def main():
             if re.fullmatch(r'search (0|(-?[1-9]\d*))', line):
                 _, k = re.split(' ', line)
                 i = mh.search(int(k))
-                print(f'1 {i} {mh.get_node_by_index(i).val}' if not i == -1 else '0')
+                print(f'1 {i} {mh.get_node_by_index(i).val}' if i is not None else '0')
                 continue
             if re.fullmatch(r'add (0|(-?[1-9]\d*)) .*', line):
                 _, k, v = re.split(' ', line)
