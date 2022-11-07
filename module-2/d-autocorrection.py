@@ -63,18 +63,21 @@ class Trie:
 
         if not word and self.root.is_terminal:
             return True
-        cur_node, cur_str, word_i, cur_str_i = self.root, self.root.substr, 0, 0
-        while word_i < len(word) and cur_node is not None:
+        cur_node, word_i, cur_str_i = self.root.children[word[0]], 0, 0
+        cur_str = cur_node.substr
+        while word_i < len(word):
             if word[word_i] != cur_str[cur_str_i]:
                 return False
-            if cur_str_i != len(cur_str) - 1:
-                continue
-            if word_i == len(word) - 1 and cur_node.is_terminal:
-                return True
-            if not word_i + 1 < len(word):
-                return False
-            cur_node, cur_str_i = cur_node.children.get(word[word_i + 1]), 0
             word_i += 1
+            cur_str_i += 1
+            if cur_str_i < len(cur_str):
+                continue
+            if word_i == len(word) and cur_node.is_terminal:
+                return True
+            cur_node, cur_str_i = cur_node.children.get(word[word_i]), 0
+            if cur_node is None:
+                return False
+            cur_str = cur_node.substr
         return False
 
     def suggest(self, word: str) -> (ResultType, list):
