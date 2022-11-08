@@ -102,26 +102,29 @@ class Trie:
                     node.suggest(w, res, pi=pi + ind, mistake=False, acc=acc + node.substr)
                     continue
 
-                if node.substr[ind:] == w[ind + 1 + pi:len(acc + node.substr) + 1]:
+                pi_ind = pi + ind
+                pi_ind_1 = pi_ind + 1
+
+                if node.substr[ind:] == w[pi_ind_1:len(acc + node.substr) + 1]:
                     check_add(len(w) - 1)
                     node.suggest(w, res, pi=pi + len(node.substr) + 1, mistake=True, acc=acc + node.substr)
 
-                if node.substr[ind + 1:] == w[ind + pi:len(acc + node.substr) - 1]:
+                if node.substr[ind + 1:] == w[pi_ind:len(acc + node.substr) - 1]:
                     check_add(len(w) + 1)
                     node.suggest(w, res, pi=pi + len(node.substr) - 1, mistake=True, acc=acc + node.substr)
 
-                if node.substr[ind + 1:] == w[ind + 1 + pi:len(acc + node.substr)]:
+                if node.substr[ind + 1:] == w[pi_ind_1:len(acc + node.substr)]:
                     check_add(len(w))
                     node.suggest(w, res, pi=pi + len(node.substr), mistake=True, acc=acc + node.substr)
 
-                if pi + ind + 1 < len(w) and w[pi + ind] in node.children and w[pi + ind + 1] == node.substr[ind]:
-                    adjusted = w[:pi + ind] + w[pi + ind + 1] + w[pi + ind] + w[pi + ind + 2:]
+                if pi_ind_1 < len(w) and w[pi_ind] in node.children and w[pi_ind_1] == node.substr[ind]:
+                    adjusted = w[:pi_ind] + w[pi_ind_1] + w[pi_ind] + w[pi_ind_1 + 1:]
                     check_add(len(w))
                     node.suggest(adjusted, res, pi=pi + len(node.substr), mistake=True, acc=acc + node.substr)
                     continue
 
-                if ind < len(node.substr) - 1 and pi + ind < len(w) - 1 and node.substr[ind] == w[pi + ind + 1] and \
-                        node.substr[ind + 1] == w[pi + ind] and node.substr[ind + 2:] == w[pi + ind + 2:len(acc + node.substr)]:
+                if ind < len(node.substr) - 1 and pi_ind < len(w) - 1 and node.substr[ind] == w[pi_ind_1] and \
+                        node.substr[ind + 1] == w[pi_ind] and node.substr[ind + 2:] == w[pi_ind_1 + 1:len(acc + node.substr)]:
                     check_add(len(w))
                     node.suggest(w, res, pi=pi + len(node.substr), mistake=True, acc=acc + node.substr)
 
