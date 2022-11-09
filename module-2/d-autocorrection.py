@@ -171,29 +171,29 @@ class Trie:
         '''
         if not word:
             return
-        word = word.lower()
-        cur_node, word_i, cur_str_i = self.root.children.get(word[0]), 0, 0
+        lowered = word.lower()
+        cur_node, word_i, cur_str_i = self.root.children.get(lowered[0]), 0, 0
         if cur_node is None:
-            self.root.add_child(word)
+            self.root.add_child(lowered)
             return
         cur_str = cur_node.substr
         while True:
-            if not word[word_i] == cur_str[cur_str_i]:
-                cur_node.split(cur_str_i, word[word_i:])
+            if not lowered[word_i] == cur_str[cur_str_i]:
+                cur_node.split(cur_str_i, lowered[word_i:])
                 return
             word_i += 1
             cur_str_i += 1
-            if cur_str_i == len(cur_str) and word_i < len(word):
-                next_node, cur_str_i = cur_node.children.get(word[word_i]), 0
+            if cur_str_i == len(cur_str) and word_i < len(lowered):
+                next_node, cur_str_i = cur_node.children.get(lowered[word_i]), 0
                 if next_node is None:
-                    cur_node.add_child(word[word_i:])
+                    cur_node.add_child(lowered[word_i:])
                     return
                 cur_node = next_node
                 cur_str = cur_node.substr
-            if word_i == len(word) and cur_str_i < len(cur_str):
+            if word_i == len(lowered) and cur_str_i < len(cur_str):
                 cur_node.extract(cur_str_i)
                 return
-            if word_i == len(word) and word_i == len(word):
+            if word_i == len(lowered) and word_i == len(lowered):
                 cur_node.is_terminal = True
                 return
 
@@ -210,23 +210,23 @@ class Trie:
         '''
         if not word:
             return False
-        word = word.lower()
-        cur_node, word_i, cur_str_i = self.root.children.get(word[0]), 0, 0
+        lowered = word.lower()
+        cur_node, word_i, cur_str_i = self.root.children.get(lowered[0]), 0, 0
         if cur_node is None:
             return False
         cur_str = cur_node.substr
-        while word_i < len(word):
-            if word[word_i] != cur_str[cur_str_i]:
+        while word_i < len(lowered):
+            if lowered[word_i] != cur_str[cur_str_i]:
                 return False
             word_i += 1
             cur_str_i += 1
             if cur_str_i < len(cur_str):
                 continue
-            if word_i == len(word):
+            if word_i == len(lowered):
                 if cur_node.is_terminal:
                     return True
                 return False
-            cur_node, cur_str_i = cur_node.children.get(word[word_i]), 0
+            cur_node, cur_str_i = cur_node.children.get(lowered[word_i]), 0
             if cur_node is None:
                 return False
             cur_str = cur_node.substr
