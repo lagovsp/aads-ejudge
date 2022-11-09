@@ -1,3 +1,5 @@
+# Copyright Sergey Lagov 2022
+
 from sys import argv
 from colorama import init, Fore
 
