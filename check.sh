@@ -8,5 +8,5 @@ echo Tests: "$3"
 for ((i = 1; i <= $3; ++i)); do
   python3 "$1" >output.txt <"$2"/input/input"$i".txt
   echo -n "Test $i: "
-  python3 checker.py output.txt "$2"/answers/answer"$i".txt
+  python3 checker.py "$2"/answers/answer"$i".txt output.txt
 done
