@@ -1,0 +1,18 @@
+set_isze 5
+apopb
+popba
+pushba 1
+pushba 2
+pushba 3
+pushba 4
+pushba 5
+printa
+set_size 3
+pushb 1
+pushb 2
+pushb 100500
+pushba 6
+popba
+pushba 6
+printa
+print

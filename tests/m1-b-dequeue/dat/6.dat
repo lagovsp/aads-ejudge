@@ -1,0 +1,13 @@
+set_size 5
+popb
+pushb 1
+pushb 2
+pushb 3
+pushb 4
+pushb 5
+set_size 6
+print
+pushb 6
+popb
+pushb 6
+print
