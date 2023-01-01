@@ -21,7 +21,7 @@ for ((i = 1; i <= $3; ++i)); do
   secs=$((runtime / 1000))
   milliseconds=$((runtime - secs * 1000))
   printf "%3s." $secs
-  printf "%03ds %13s " $milliseconds $T
+  printf "%03ds                " $milliseconds
   python3 checker.py "$2"/ans/"$i".ans output.txt
 done
 
