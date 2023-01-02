@@ -1,10 +1,10 @@
 #!/bin/bash
 # Copyright Sergey Lagov 2022
 
-echo Language: "           $1"
-echo Program source path: "$2"
-echo Tests folder path: "  $3"
-echo Tests: "              $4"
+echo "Language:            $1"
+echo "Program source path: $2"
+echo "Tests folder path:   $3"
+echo "Tests:               $4"
 
 output="output.txt"
 ofilename="test_program"
@@ -31,7 +31,7 @@ for ((i = 1; i <= $4; ++i)); do
   secs=$((runtime / 1000))
   milliseconds=$((runtime - secs * 1000))
   printf "%3s.%03ds               " $secs $milliseconds
-  python3 checker.py "$3"/ans/"$i".ans output.txt
+  python3 checker.py "$3"/ans/"$i".ans "$output"
 done
 
 if [[ "$1" == "cpp" ]]; then
