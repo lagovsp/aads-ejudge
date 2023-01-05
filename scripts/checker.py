@@ -21,9 +21,9 @@ def parse_new_lines(lines: list) -> list:
 def check_order(user_in: list, correct_in: list) -> bool:
     for i, correct in enumerate(correct_in):
         if not correct == user_in[i]:
-            print(Fore.RED + f'ERROR line {i + 1} ' +
-                  Fore.WHITE + f'Correct: "{correct}"' +
-                  Fore.RED + f' Wrong: "{user_in[i]}"')
+            print(Fore.RED + f'ERROR line {i + 1}')
+            print(Fore.RESET + f'\t\t\t       Correct: "{correct}"')
+            print(Fore.RED + f'\t\t\t       Wrong: "{user_in[i]}"')
             return False
     return True
 
